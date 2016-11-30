@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="BIWS16_Group1_Generate:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/BIWS16_Group1_Generate_jar</output-path>
+    <root id="archive" name="BIWS16_Group1_Generate.jar">
+      <element id="module-output" name="BIWS16_Group1_Generate" />
+    </root>
+  </artifact>
+</component>
