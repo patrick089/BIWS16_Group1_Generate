@@ -1,4 +1,4 @@
-package bi.inputOutput;
+package bi;
 
 /**
  * Created by Patrick on 30.11.16.
@@ -8,9 +8,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.StringTokenizer;
-import bi.data.DataSet;
-import bi.DataMiningException;
+
+import bi.model.DataSet;
 
 public class DataSetReader {
 
@@ -25,38 +24,38 @@ public class DataSetReader {
 
     public DataSet read() {
         BufferedReader br = null;
-        this.dataset = new DataSet();
+        dataset = new DataSet();
         boolean first = true;
         try {
-            br = new BufferedReader(new FileReader(this.filename));
+            br = new BufferedReader(new FileReader(filename));
             String line;
             int i = 0;
             while ((line = br.readLine()) != null) {
+            	System.out.println("Read Line " + i);
                 if (first) {
-                    this.readHeader(line);
+                    readHeader(line);
                     first = false;
                 } else {
-                    this.readLine(line);
+                    readLine(line);
                     i++;
                 }
             }
-            // Hack: The last attribute is the cl (hardcoded)
-            this.dataset.setAttributeAsCl(this.dataset.getAttributes()
-                    .size() - 1);
-            this.dataset.setLength(i);
+            // set class as last attribute!
+            dataset.setAttributeAsCl(dataset.getAttributes().size() - 1);
+            dataset.setLength(i);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            throw new DataMiningException();
+            throw new IllegalArgumentException("File not found - " + e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
-            throw new DataMiningException();
+            throw new IllegalArgumentException("error reading file - " + e.getMessage());
         } finally {
             if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    throw new DataMiningException();
+                    throw new IllegalArgumentException("File closing reader - " + e.getMessage());
                 }
             }
         }
@@ -64,19 +63,18 @@ public class DataSetReader {
     }
 
     private void readHeader(String line) {
-        int i = 0;
-        StringTokenizer st = new StringTokenizer(line, SEPERATION_CHAR);
-        while (st.hasMoreTokens()) {
-            this.dataset.addAttribute(i++, st.nextToken());
-        }
+    	String split[] = line.split(SEPERATION_CHAR);
+    	for (int i = 0; i < split.length; i++) {
+    		dataset.addAttribute(i, split[i]);
+		}
     }
 
     private void readLine(String line) {
-        int i = 0;
-        StringTokenizer st = new StringTokenizer(line, SEPERATION_CHAR);
-        while (st.hasMoreTokens()) {
-            this.dataset.getAttributes().get(i++).addValue(st.nextToken());
-        }
+    	String split[] = line.split(SEPERATION_CHAR);
+    	for (int i = 0; i < split.length; i++) {
+    		dataset.getAttributes().get(i).addValue(split[i]);    		
+		}
+    	
     }
 
 }

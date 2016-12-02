@@ -1,4 +1,4 @@
-package bi.data;
+package bi.model;
 
 /**
  * Created by Patrick on 30.11.16.

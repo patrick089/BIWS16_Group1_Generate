@@ -1,4 +1,4 @@
-package bi.data;
+package bi.model;
 
 /**
  * Created by Patrick on 30.11.16.
@@ -41,6 +41,10 @@ public class Attribute {
 
     public List<String> getValues() {
         return this.values;
+    }
+    
+    public void setValues(List<String> values){
+    	this.values = values;
     }
 
     public String getValue(int pos) {

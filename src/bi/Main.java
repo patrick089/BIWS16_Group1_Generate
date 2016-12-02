@@ -6,11 +6,8 @@ package bi;
 
 import java.util.ArrayList;
 import java.util.List;
-import bi.data.DataSet;
-import bi.inputOutput.DataSetReader;
-import bi.inputOutput.DataSetWriter;
-import bi.generator.SingleValueMissingGenerator;
-import bi.generator.MultiValueMissingGenerator;
+
+import bi.model.DataSet;
 
 public class Main {
 
@@ -19,29 +16,25 @@ public class Main {
         DataSet dataset = reader.read();
         DataSet missingValueDataset;
 
-        if (args.length <= 2) {
-            System.out.println("Not enough parameters!");
-            throw new DataMiningException();
+        if (args.length < 3) {
+        	System.out.println("You must enter at least 3 parameters!");
+            throw new IllegalArgumentException("You must enter at least 3 parameters!");
         } else if (args.length == 3) {
-            int chance = Integer.parseInt(args[2]);
-            missingValueDataset = new SingleValueMissingGenerator(dataset)
-                    .doIt(chance);
+            int percentage = Integer.parseInt(args[2]);
+            missingValueDataset = new MissingValueGenerator(dataset).generateMissingValues(percentage);
         } else {
-            List<Double> chances = new ArrayList<Double>();
+            
+        	List<Integer> percentages = new ArrayList<Integer>();
             for (int i = 2; i < args.length; i++) {
-                chances.add(Double.parseDouble(args[i]));
+                percentages.add(Integer.parseInt(args[i]));
             }
+            
             // size -1 because class cannot be replaced
-            if ((dataset.getAttributes().size() - 1) != chances.size()) {
-                System.out
-                        .println("Count amount differs from count attributes! ("
-                                + (dataset.getAttributes().size() - 1)
-                                + " expected but  "
-                                + chances.size() + " given)");
-                throw new DataMiningException();
+            if ((dataset.getAttributes().size() - 1) != percentages.size()) {
+                System.out.println("Number of chances given is higher than number of possible attributes");
+                throw new IllegalArgumentException("Number of chances given is higher than number of possible attributes");
             }
-            missingValueDataset = new MultiValueMissingGenerator(dataset)
-                    .doIt(chances);
+            missingValueDataset = new MissingValueGenerator(dataset).generateMissingValues(percentages);
         }
 
         new DataSetWriter(args[1], missingValueDataset).write();
